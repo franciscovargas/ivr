@@ -74,4 +74,4 @@ figure
 imshow(bw)
 
 %return region properties (along with bounding boxes)
-conts = property
+conts = property;
