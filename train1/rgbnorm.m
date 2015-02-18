@@ -6,12 +6,13 @@ green = img(:,:,3);
 normm = zeros(height,width,color,'double');
 for i=1:height
     for j=1:width
+    	% the prints bellow print non zero results
     	% disp(double(red(i,j)) / double( red(i,j)+ blue(i,j)+green(i,j)));
     	% disp(double(double( red(i,j)+ blue(i,j)+green(i,j))));
-        normm(i:j:1) = double(red(i,j)) / double( red(i,j)+ blue(i,j)+green(i,j));
-        normm(i:j:2) = double(green(i,j)) / double( red(i,j)+ blue(i,j)+green(i,j));
-        normm(i:j:3) = double(blue(i,j)) / double( red(i,j)+ blue(i,j)+green(i,j));
+        normm(i,j,1) = double(red(i,j)) / double( red(i,j)+ blue(i,j)+green(i,j));
+        normm(i,j,2) = double(green(i,j)) / double( red(i,j)+ blue(i,j)+green(i,j));
+        normm(i,j,3) = double(blue(i,j)) / double( red(i,j)+ blue(i,j)+green(i,j));
     end
 end
-disp(normm);
+
 rgbnorm = normm;
