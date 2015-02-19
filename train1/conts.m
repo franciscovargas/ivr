@@ -14,8 +14,11 @@ function conts = countours(img)
 % Morphological transformation
 % removes open 1 valued pixels
 % for a given specified size
-bw = bwareaopen(img,1);
-
+% bw = bwareaopen(img,1);
+bw = img;
+% dimensions
+[height width] = size(img);
+[height width]
 % display  binary image
 imshow(bw)
 
@@ -33,7 +36,20 @@ cent = [mean(x) mean(y)];
 % Retain current plots when adding 
 % new plots
 hold on
-
+% [maxs row] = max([property.Area], [],2);
+% main_box = property(row).BoundingBox;
+% tester = zeros(height,width);
+% for i=1:height
+%     for j=1:width
+%         if j > main_box(1) & j < main_box(3) +  main_box(1)...
+%         & i > main_box(2) & i < main_box(4) + main_box(2)
+%             tester(i,j) = bw(i,j);
+%             disp('HELP');
+%         end
+%     end
+% end
+% imshow(tester);
+% disp(main_box);
 % draw the bounding boxes in the image
 for n=1:size(property,1)
 
@@ -44,6 +60,7 @@ end
 pause (3)
 
 % find areas smaller than 500
+
 small_areas=find([property.Area]<500);
 
 % display areas (in red)

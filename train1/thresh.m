@@ -17,13 +17,20 @@ Normed good params:
 	red: 0.513, 0.572
 	green: 0.549, 0.612
 	blue: 0.525. 0.529
+
+
+smothed histograms are kinda shit
+updated upper bounds:
+	r: 0.6026
+	g: 0.6096
+	b: 0.616
 	
 %}
 [height, width, color] = size(value);
 output = zeros(height, width,3);
 for row = 1 : height
 	for col = 1 : width
-		if value(row,col,1) < 1 ... % inside high bnd
+		if value(row,col,1) < 0.6026 ... % inside high bnd
 		& value(row,col,1) > 0.505 % optional low bnd
 			output(row,col,1) = 1;
 		else
@@ -34,7 +41,7 @@ end
 
 for row = 1 : height
 	for col = 1 : width
-		if value(row,col,2) < 1 ... % inside high bnd
+		if value(row,col,2) < 0.6096 ... % inside high bnd
 		& value(row,col,2) > 0.549% optional low bnd
 			output(row,col,2) = 1;
 		else
@@ -46,7 +53,7 @@ end
 
 for row = 1 : height
 	for col = 1 : width
-		if value(row,col,3) < 1 ... % inside high bnd
+		if value(row,col,3) < 0.616 ... % inside high bnd
 		& value(row,col,3) > 0.525 % optional low bnd
 			output(row,col,3) = 1;
 		else
