@@ -10,7 +10,9 @@ function thresh = findthresh(thehist, edges,sizeparam,show)
   filterlen = sizeparam;                               % filter length
   thefilter = fspecial('gaussian',[1,sizeparam],6);
   thefilter = thefilter/sum(thefilter);                  % normalize
-  tmp2=conv(thefilter,thehist);    
+  tmp2=conv(thefilter,thehist);   
+
+
   tmp2           
   tmp1=tmp2    % select corresponding portion
   if show > 0
@@ -99,7 +101,8 @@ function thresh = findthresh(thehist, edges,sizeparam,show)
   if xmaxr > xmaxl
       thresh = valr;
   else
-      thresh = vall;
+      % thresh = vall;
+      thresh = valr;
   end
 
 
