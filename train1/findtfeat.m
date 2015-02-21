@@ -16,7 +16,7 @@ function thresh = findthresh(thehist, edges,sizeparam,show)
   tmp2;           
   tmp1=tmp2;    % select corresponding portion
   if show > 0
-     figure(show)
+     figure
      clf
      plot(edges, tmp1(1:x))
   end
@@ -26,15 +26,14 @@ function thresh = findthresh(thehist, edges,sizeparam,show)
   peak = find(tmp1 == max(tmp1));
   tmp1(peak);
   
-  % find highest peak to left
+  % find first peak to left
   xmaxl = -1;
   pkl = -1;
   for i = 2 : peak-1
-    if tmp1(i-1) < tmp1(i) & tmp1(i) >= tmp1(i+1)
-      if tmp1(i) > xmaxl
-        xmaxl = tmp1(i);
-        pkl = i;
-      end 
+    if tmp1(i-1) < tmp1(i) & tmp1(i) >= tmp1(i+1) & tmp1(i) >100
+      xmaxl = tmp1(i);
+      pkl = i;
+      break;
     end
   end
   if pkl == -1
@@ -48,10 +47,9 @@ function thresh = findthresh(thehist, edges,sizeparam,show)
   vall = -1;
   for i = pkl+1 : peak-1
     if tmp1(i-1) > tmp1(i) & tmp1(i) <= tmp1(i+1)
-      if tmp1(i) < xminl
-        xminl = tmp1(i);
-        vall = i;
-      end
+      xminl = tmp1(i);
+      vall = i;
+      break;
     end
   end
   if vall == -1
@@ -60,51 +58,15 @@ function thresh = findthresh(thehist, edges,sizeparam,show)
   end
 %    [vall,xminl]
 
-  % find highest peak to right
-  xmaxr = -1;
-  pkr = -1;
-  for i = peak+1 : x-1
-    if tmp1(i-1) < tmp1(i) & tmp1(i) >= tmp1(i+1)
-      if tmp1(i) > xmaxr
-        xmaxr = tmp1(i);
-        pkr = i;
-      end 
-    end
-  end
-  if pkr == -1
-    disp('FOUND');
-    pkr = len;
-    xmaxr = 1;
-  end
-%    [pkr,xmaxr]
-  pkr
-  peak
-
-  % find deepest valley between peaks
-  xminr = max(tmp1)+1;
-  valr = -1;
-  for i = peak+1 : pkr-1
-    if tmp1(i-1) > tmp1(i) & tmp1(i) <= tmp1(i+1)
-      if tmp1(i) < xminr
-        xminr = tmp1(i);
-        valr = i;
-      end
-    end
-  end
-  if valr == -1
-    valr = len-1;
-    xminr = 2;
-  end
-%    [valr,xminr]
-  valr
-  % find lowest point between peaks
-  if xmaxr > xmaxl
+  % % find lowest point between peaks
+  % if xmaxr > xmaxl
       % thresh = valr;
-      thresh = vall;
-  else
-      thresh = vall;
-      % thresh = valr;
-  end
+  thresh = vall;
+  % else
+  %     thresh = vall;
+  %     % thresh = valr;
+  % end
 
-  edges(vall)
+  edges(vall);
   thresh = edges(thresh);    % subtract 1 as histogram bin 1 is for value 0
+  thresh

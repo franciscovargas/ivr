@@ -13,6 +13,7 @@ function conts = countours(img)
 [height width] = size(img);
 
 % display image
+figure
 imshow(img)
 
 % lable connecteded elements
