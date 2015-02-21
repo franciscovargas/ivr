@@ -1,7 +1,9 @@
 function rgbnorm = normalize(img);
+
 red = img(:,:,1);
-blue = img(:,:,2);
-green = img(:,:,3);
+green = img(:,:,2);
+blue = img(:,:,3);
+
 [height, width, color] = size(img);
 normm = zeros(height,width,color,'double');
 for i=1:height
