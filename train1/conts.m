@@ -18,7 +18,7 @@ function conts = countours(img)
 bw = img;
 % dimensions
 [height width] = size(img);
-[height width]
+% [height width]
 % display  binary image
 imshow(bw)
 
@@ -35,7 +35,9 @@ cent = [mean(x) mean(y)];
 
 % Retain current plots when adding 
 % new plots
+
 hold on
+
 % [maxs row] = max([property.Area], [],2);
 % main_box = property(row).BoundingBox;
 % tester = zeros(height,width);
@@ -51,29 +53,32 @@ hold on
 % imshow(tester);
 % disp(main_box);
 % draw the bounding boxes in the image
+[none asize] = size([property.Area]);
+area = zeros(none, asize);
 for n=1:size(property,1)
 
-    rectangle('Position',property(n).BoundingBox,'EdgeColor','g','LineWidth',2)
+    rectangle('Position',property(n).BoundingBox,'EdgeColor','g','LineWidth',2);
+    area(n) = property(n).BoundingBox(3) * property(n).BoundingBox(4);
 
 end
 
-pause (3)
+% pause (3)
 
-% find areas smaller than 500
+% find areas smaller than 200
 
-small_areas=find([property.Area]<500);
+small_areas=find([property.Area]<200);
 
 % display areas (in red)
-% smaller than 500
+% smaller than 200
 for n=1:size(small_areas,2)
 
     rectangle('Position',...
     	       property(small_areas(n)).BoundingBox, ...
-    		   'EdgeColor','r','LineWidth',2)
+    		   'EdgeColor','r','LineWidth',2);
 
 end
 
-pause (2)
+% pause (2)
 
 % remove the small areas.
 for n=1:size(small_areas,2)
@@ -87,8 +92,10 @@ for n=1:size(small_areas,2)
 end
 
 figure
-
 imshow(bw)
 
+out.prop = property
+out.bw = bw
+out.boxarea = area;
 %return region properties (along with bounding boxes)
-conts = property;
+conts = out;
