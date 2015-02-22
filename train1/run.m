@@ -1,4 +1,4 @@
-img = imread('../train2/test1.jpg');
+img = imread('../train2/test2.jpg');
 
 I = rgb2gray(img);
 
@@ -53,3 +53,28 @@ biggest = imcrop(crop, biggest);
 
 figure
 imshow(biggest);
+
+% PROPERTIES
+
+% red channel
+smallest_norm = rgbnorm(smallest);
+% smallest_norm = smallest;
+smallest_norm_red = smallest_norm(:,:,1);
+[h w] = size(smallest_norm_red);
+red_vec = reshape(smallest_norm_red,1,w*h);
+red_val = mean(red_vec);
+
+
+% feature vector
+fn = 3;
+[no N] = size(property3); 
+no = 4;
+featureVec = zeros(1,no*fn+1);
+for i=1:no t_img = property3(i).Image; 
+    tmpv = getproperties(t_img);
+    for j=1:fn 
+        featureVec(i + (j-1)*no) = tmpv(j); 
+    end
+end
+featureVec(no*fn+1) = red_val;
+featureVec

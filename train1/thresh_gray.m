@@ -52,7 +52,8 @@ histr = histc(vecr, edges);
 
 % use findtnorm to find threshold values
 sizeparam = 8;
-ftnr = findtfeat(histr,edges,sizeparam,1);
+% ftnr = findtfeat(histr,edges,sizeparam,1);
+ftnr = findtfeat(histr,edges,sizeparam,0);
 
 [height, width, color] = size(normed);
 output = zeros(height, width);

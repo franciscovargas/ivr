@@ -1,0 +1,18 @@
+
+
+
+% threshed2 = bwmorph(threshed2, 'majority', 300);
+% gauss = fspecial('gaussian', [5 5], 6);
+% threshed2 = imfilter(threshed2, gauss);
+
+% threshed2 = bwmorph(threshed2, 'thin', 1);
+
+
+area3 = property3;
+area3(row3) = [];
+[mins row3] = min([area3.Area], [], 2);
+smallest2 = area3(row3).BoundingBox;
+smallest2 = imcrop(crop, smallest2);
+
+figure
+imshow(smallest2);
