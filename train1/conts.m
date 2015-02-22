@@ -21,7 +21,7 @@ imshow(img)
 
 % calculate the properties of the regions
 % within the image
-property = regionprops(lable);
+property = regionprops(lable, 'all');
 
 % TO DO. Center of mass calculation
 [y x] = find(img);
@@ -42,6 +42,10 @@ for n=1:size(property, 1)
               'g', ...
               'LineWidth', ...
               2);
+    % convex = property(n).ConvexHull;
+    % x = convex(:,1);
+    % y = convex(:,2);
+    % plot(x,y,'b');
     area(n) = property(n).BoundingBox(3) * property(n).BoundingBox(4);
 end
 
