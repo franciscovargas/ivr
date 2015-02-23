@@ -1,10 +1,10 @@
-eval(['load ','the.mat',' maxclasses Means Invcors Aprioris'])
+eval(['load ','the1.mat',' maxclasses Means Invcors Aprioris'])
 imagestem = input('Test image file stem (filestem)\n?','s');
 run=1;
-
+N =32
 Dim=3;
 for imagenum = 1 : N
-    currentimagergb = imread([trainfilestem, int2str(imagenum), '.jpg'], 'jpg');
+    currentimagergb = imread([imagestem, int2str(imagenum), '.jpg'], 'jpg');
     
     extrr = extractprops(currentimagergb,0);
         % red channel

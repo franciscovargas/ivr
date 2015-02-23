@@ -38,6 +38,11 @@ for imagenum = 1 : N/2
     non
     for i=1:s
         vec(imagenum + i - 1 + (ss-1),:) = extr(i,1:3);
+        if suits(sort_indexes(imagenum)) == 3
+            class_vec(imagenum + i - 1 + (ss-1)) = 2;
+        else
+            class_vec(imagenum + i - 1 + (ss-1)) = 1;
+        end
     end
     % trueclasses(imagenum) = input(['Train image ', int2str(imagenum), ...
     %                                 ' true class (1..', int2str(maxclasses), ')\n?']);
@@ -52,5 +57,5 @@ for imagenum = 1 : N/2
 end
 size(vec)
 trueclasses
-[Means, Invcors, Aprioris] = buildmodel(Dim, vec, N, maxclasses, trueclasses);
+[Means, Invcors, Aprioris] = buildmodel(Dim, vec, N, maxclasses, class_vec);
 eval(['save ', modelfilename, ' maxclasses Means Invcors Aprioris'])
