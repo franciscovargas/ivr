@@ -7,6 +7,8 @@ function class = classify(v,N,Means,Invcors,Dim,Aprioris)
         IC = zeros(Dim,Dim);
         for i = 1 : N
             % We need to reshape since Invcors(i,:,:) gives 1xDimxDim matrix
+            i
+            size(Invcors(i,:,:))
             IC = reshape(Invcors(i,:,:),Dim,Dim);
             evals(i) = multivariate(v,Means(i,:),IC,Aprioris(i));
         end

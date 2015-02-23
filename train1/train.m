@@ -4,26 +4,26 @@ suits = gtf_conts(:,1);
 [N none] = size(suits);
 N
 
-Dim = 3; % number of feature properties
-modelfilename = input('Model file name (filename)\n?','s');
-maxclasses = input('Number of classes (int)\n?');
-trainfilestem = input('Training image file stem (filestem)\n?', 's');
+Dim = 4; % number of feature properties
+modelfilename ='train.mat';
+maxclasses = 4;
+trainfilestem = 'train';
 % N = input('Number of training images (int)\n?');
 
-for imagenum = 1 : N
-    currentimagergb = imread([trainfilestem, int2str(imagenum), '.jpg'], 'jpg');
+% for imagenum = 1 : N
+%     currentimagergb = imread([trainfilestem, int2str(imagenum), '.jpg'], 'jpg');
     
-    extrr = extractprops(currentimagergb,0);
-        % red channel
-    reds(imagenum) = mean(extrr(:,Dim+1));
-end
-[reds sort_indexes] = sort(reds);
+%     extrr = extractprops(currentimagergb,0);
+%         % red channel
+%     reds(imagenum) = mean(extrr(:,Dim+1));
+% end
+% [reds sort_indexes] = sort(reds);
 
 disp('THE LINE ############################################################');
 
 ss=1;
-for imagenum = 1 : N/2
-    currentimagergb2 = imread([trainfilestem, int2str(sort_indexes(imagenum)), '.jpg'], 'jpg');
+for imagenum = 1 : N
+    currentimagergb2 = imread([trainfilestem, int2str(imagenum), '.jpg'], 'jpg');
     % currentimage = rgb2gray(currentimagergb);
     currentimage = currentimagergb2;
 
@@ -37,17 +37,13 @@ for imagenum = 1 : N/2
     s
     non
     for i=1:s
-        vec(imagenum + i - 1 + (ss-1),:) = extr(i,1:3);
-        if suits(sort_indexes(imagenum)) == 3
-            class_vec(imagenum + i - 1 + (ss-1)) = 2;
-        else
-            class_vec(imagenum + i - 1 + (ss-1)) = 1;
-        end
+        vec(imagenum + i - 1 + (ss-1),:) = extr(i,:);
+        class_vec(imagenum + i - 1 + (ss-1)) = suits(imagenum);
     end
     % trueclasses(imagenum) = input(['Train image ', int2str(imagenum), ...
     %                                 ' true class (1..', int2str(maxclasses), ')\n?']);
     ss = ss + s - 1;
-    trueclasses(imagenum) = suits(sort_indexes(imagenum));
+    trueclasses(imagenum) = suits(imagenum);
     if trueclasses(imagenum) == 3
         trueclasses(imagenum) = 2;
     else
@@ -56,6 +52,6 @@ for imagenum = 1 : N/2
 
 end
 size(vec)
-trueclasses
+% trueclasses
 [Means, Invcors, Aprioris] = buildmodel(Dim, vec, N, maxclasses, class_vec);
 eval(['save ', modelfilename, ' maxclasses Means Invcors Aprioris'])

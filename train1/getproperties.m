@@ -39,4 +39,4 @@ ci6 = 1000000*imag(tmp);
      vec = [compactness,ci1,ci2];         %only use 3 as only have 4 samples
      % vec = [compactness,ci1];
      % vec
-     vec
+     % vec

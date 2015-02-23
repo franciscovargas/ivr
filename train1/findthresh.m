@@ -21,7 +21,7 @@ function thresh = findthresh(thehist,sizeparam,show)
   peak = find(tmp1 == max(tmp1));
   
   % find highest peak to left
-  xmaxl = -1;
+  xmaxl = -1;                                                 
   pkl = -1;
   for i = 2 : peak-1
     if tmp1(i-1) < tmp1(i) & tmp1(i) >= tmp1(i+1)

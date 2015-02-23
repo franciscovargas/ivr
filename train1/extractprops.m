@@ -9,6 +9,7 @@ function runn = extractprops(img, prop)
     out1 = conts(threshed);
     property = out1.prop;
     [maxs row] = max([property.Area], [], 2);
+    [mehh min_rw] = min([property.Area], [], 2);
     main_box = property(row).BoundingBox;
     % convex_box = property(row).ConvexHull;
     % cx = convex_box(:,1);
@@ -48,13 +49,15 @@ function runn = extractprops(img, prop)
     % PROPERTIES
 
     % red channel
-    smallest_norm = rgbnorm(smallest);
+    smallest_norm = rgbnorm2(smallest);
     % smallest_norm = smallest;
     smallest_norm_red = smallest_norm(:,:,1);
     [h w] = size(smallest_norm_red);
     red_vec = reshape(smallest_norm_red,1,w*h);
+    % red_vec
     red_val = mean(red_vec);
     Icrop = rgb2gray(rgbnorm(crop));
+    % Pcro = rgbnorm2(crop);
 
 
     % feature vector
@@ -76,10 +79,10 @@ function runn = extractprops(img, prop)
         no
         for i=1:no-2 
             cropB = property3(indicesz(i)).BoundingBox;
-            cropB(1) = cropB(1)-3;
-            cropB(2) = cropB(2)-3;
-            cropB(3) = cropB(3)+ 3;
-            cropB(4) = cropB(4)+ 3;
+            cropB(1) = cropB(1)-2;
+            cropB(2) = cropB(2)-2;
+            cropB(3) = cropB(3)+ 2;
+            cropB(4) = cropB(4)+ 2;
             seg = imcrop(Icrop, cropB);
 
             gts = graythresh(seg);
@@ -99,14 +102,7 @@ function runn = extractprops(img, prop)
             featureVec(i,fn+1) = red_val;
         end
     else
-        for i=1:2
-            t_img = property3(i).Image;
-            tmpv = getproperties(t_img);
-            for j=1:fn 
-                featureVec(i-2,j) = tmpv(j); 
-            end
-            featureVec(i-2,fn+1) = red_val;
-        end
+        featureVec = no -4;
     end
     % featureVec(no*fn+1) = red_val;
     % featureVec(end) = red_val;
