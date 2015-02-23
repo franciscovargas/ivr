@@ -1,4 +1,5 @@
 eval(['load ','train.mat',' maxclasses Means Invcors Aprioris'])
+tr_c = load('GT_testing.mat');
 imagestem = 'test';
 run=1;
 N =32
@@ -36,9 +37,18 @@ while ~(run == 0)
     disp('class: ');
     mode(class)
     num
+    out_vec(imagenum, 1) = mode(class);
+    out_vec(imagenum, 2) = num;
+    if imagenum+1 == 33
+        break;
+    end
     run = input(['Want to process another image',...
     int2str(imagenum+1),' (0,1)\n?']);
+   
 end
+class_vecf.suits = out_vec(:,1);
+class_vecf.numbe = out_vec(:,2);
+save('confusion_matrix.mat','class_vecf');
 
 % gtf = load('GT_training.mat');
 % gtf_conts = gtf.gt_training;

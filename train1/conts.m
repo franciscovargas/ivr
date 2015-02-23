@@ -50,7 +50,7 @@ for n=1:size(property, 1)
 end
 
 % find areas smaller than 200
-small_areas=find([property.Area]<200);
+small_areas=find([property.Area]<50);
 
 % display areas (in red) smaller than 200
 for n=1:size(small_areas,2)
