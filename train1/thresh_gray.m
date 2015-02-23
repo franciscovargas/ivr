@@ -35,7 +35,7 @@ normed = rgbnorm(value);
 % 
 normed = rgb2gray(normed);
 % find edges
-edges = linspace(0,1,255);
+edges = linspace(0,255,256);
 
 % value = normed;
 
@@ -51,7 +51,7 @@ histr = histc(vecr, edges);
 
 
 % use findtnorm to find threshold values
-sizeparam = 8;
+sizeparam = 13;
 % ftnr = findtfeat(histr,edges,sizeparam,1);
 ftnr = findtfeat(histr,edges,sizeparam,0);
 
@@ -67,6 +67,7 @@ for row = 1 : height
         end
     end
 end
-
+figure
+imshow(output)
 
 thresh = output;

@@ -1,8 +1,10 @@
-eval(['load ','the1.mat',' maxclasses Means Invcors Aprioris'])
+eval(['load ','blackmodel.mat',' maxclasses Means Invcors Aprioris'])
+eval(['load ','redmodel.mat',' maxclasses Meansr Invcorsr Apriorisr'])
 imagestem = input('Test image file stem (filestem)\n?','s');
 run=1;
 N =32
 Dim=3;
+max_black = 0.4653
 for imagenum = 1 : N
     currentimagergb = imread([imagestem, int2str(imagenum), '.jpg'], 'jpg');
     
@@ -24,9 +26,17 @@ while ~(run == 0)
     [naN Dim] = size(Means)
     for k=1:s
         vec
-        classi = classify(vec(k,1:3),maxclasses,Means,Invcors,Dim,Aprioris);
-        class(k)= classi.class;
-        probl(k) = classi.proba;
+        if imagenum > N/2
+            classi = classify(vec(k,1:3),maxclasses,Meansr,Invcorsr,Dim,Apriorisr);
+            class(k)= classi.class +2;
+            probl(k) = classi.proba;
+            disp('RED')
+        else
+            classi = classify(vec(k,1:3),maxclasses,Means,Invcors,Dim,Aprioris);
+            class(k)= classi.class;
+            probl(k) = classi.proba;
+            disp('BLACK')
+        end
     end
     class
     probl

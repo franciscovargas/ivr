@@ -24,8 +24,7 @@ disp('THE LINE ############################################################');
 ss=1;
 'black max'
 reds(N/2) 
-bbbbbbbb
-for imagenum = 1 : N/2
+for imagenum = N/2 + 1: N
     currentimagergb2 = imread([trainfilestem, int2str(sort_indexes(imagenum)), '.jpg'], 'jpg');
     % currentimage = rgb2gray(currentimagergb);
     currentimage = currentimagergb2;
@@ -41,7 +40,7 @@ for imagenum = 1 : N/2
     non
     for i=1:s
         vec(imagenum + i - 1 + (ss-1),:) = extr(i,1:3);
-        if suits(sort_indexes(imagenum)) == 3
+        if suits(sort_indexes(imagenum)) == 4
             class_vec(imagenum + i - 1 + (ss-1)) = 2;
         else
             class_vec(imagenum + i - 1 + (ss-1)) = 1;
@@ -49,9 +48,10 @@ for imagenum = 1 : N/2
     end
     % trueclasses(imagenum) = input(['Train image ', int2str(imagenum), ...
     %                                 ' true class (1..', int2str(maxclasses), ')\n?']);
+    imagenum
     ss = ss + s - 1;
     trueclasses(imagenum) = suits(sort_indexes(imagenum));
-    if trueclasses(imagenum) == 3
+    if trueclasses(imagenum) == 4
         trueclasses(imagenum) = 2;
     else
         trueclasses(imagenum) = 1;
@@ -60,5 +60,5 @@ for imagenum = 1 : N/2
 end
 size(vec)
 trueclasses
-[Means, Invcors, Aprioris] = buildmodel(Dim, vec, N, maxclasses, class_vec);
-eval(['save ', modelfilename, ' maxclasses Means Invcors Aprioris'])
+[Meansr, Invcorsr, Apriorisr] = buildmodel(Dim, vec, N, maxclasses, class_vec);
+eval(['save ', modelfilename, ' maxclasses Meansr Invcorsr Apriorisr'])

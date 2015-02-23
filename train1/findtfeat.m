@@ -11,11 +11,13 @@ function thresh = findthresh(thehist, edges,sizeparam,show)
   thefilter = fspecial('gaussian',[1,sizeparam],6);
   thefilter = thefilter/sum(thefilter);                  % normalize
   tmp2=conv(thefilter,thehist);   
+  % figure
+  % plot(tmp2,edges)
 
 
   tmp2;           
   tmp1=tmp2;    % select corresponding portion
-  if show > 0
+  if show > 0 | 1
      figure
      clf
      plot(edges, tmp1(1:x))

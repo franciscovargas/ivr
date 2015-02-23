@@ -17,4 +17,4 @@ for i=1:height
     end
 end
 
-rgbnorm = normm;
+rgbnorm = img;
