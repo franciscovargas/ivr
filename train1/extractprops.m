@@ -1,19 +1,16 @@
-function runn = extractprops(img, prop)
+function runn = extractprops(img, prop, show_conts)
     I = rgb2gray(img);
 
-    % laplacian edge detection
+    % Laplacian edge detection
     threshed = edge(I, 'log');
-    threshed = bwareaopen(threshed,510);
+    threshed = bwareaopen(threshed, 510);
 
-    % bounding box for card
-    out1 = conts(threshed);
+    % Bounding box for card
+    out1 = conts(threshed, show_conts);
     property = out1.prop;
     [maxs row] = max([property.Area], [], 2);
-    % [mehh min_rw] = min([property.Area], [], 2);
     main_box = property(row).BoundingBox;
-    % convex_box = property(row).ConvexHull;
-    % cx = convex_box(:,1);
-    % cy = convex_box(:,2);
+
     [th tw ch] = size(img);
 
     main_box(1) = main_box(1) + 5;
@@ -25,18 +22,18 @@ function runn = extractprops(img, prop)
     tester1 = imcrop(img, main_box);
     crop = imcrop(img, main_box);
 
-    % binary threshold of grayscale image
+    % Binary threshold of grayscale image
     threshed2 = thresh_gray(tester1);
 
-    % noise removal via majority
+    % Noise removal via majority
     threshed2 = bwmorph(threshed2, 'majority', 300);
 
-    % noise removal within the card region
-    out2 = conts(threshed2);
+    % Noise removal within the card region
+    out2 = conts(threshed2, 0);
     bwf = out2.bw;
 
-    % detection of suits and number
-    out3 = conts(bwf);
+    % Detection of suits and number
+    out3 = conts(bwf, show_conts);
     property3 = out3.prop;
     [mins row3] = min([property3.Area], [], 2);
     smallest = property3(row3).BoundingBox;
@@ -48,64 +45,54 @@ function runn = extractprops(img, prop)
 
     % PROPERTIES
 
-    % red channel
+    % Red channel
     smallest_norm = rgbnorm2(smallest);
-    % smallest_norm = smallest;
-    smallest_norm_red = smallest_norm(:,:,1);
+    smallest_norm_red = smallest_norm(:, :, 1);
     [h w] = size(smallest_norm_red);
-    red_vec = reshape(smallest_norm_red,1,w*h);
-    % red_vec
+    red_vec = reshape(smallest_norm_red, 1, w*h);
     red_val = mean(red_vec);
+
     Icrop = rgb2gray(rgbnorm(crop));
-    % Pcro = rgbnorm2(crop);
 
-
-    % feature vector
+    % Feature vector
     fn = 3;
-    [no N] = size(property3); 
-    % no = 1;
-    % featureVec = zeros(1,no*fn+1);
-    for i=1:no
+    [N none] = size(property3); 
+
+    for i = 1 : N
         xx = property3(i).Centroid(1) - center.x;
         yy = property3(i).Centroid(2) - center.y;
-        vec6(i) = sqrt(xx*xx +yy*yy) ;
-        % vec6(i).im = property3(i).Image;
+        vec6(i) = sqrt(xx*xx + yy*yy);
     end
-    [nope indicesz] = sort(vec6);
 
-    % vec6
-    if ~ prop
-        disp('noooooooooooooooooo');
-        no
-        for i=1:no-2 
+    [none indicesz] = sort(vec6);
+
+    if ~prop
+        disp('#######################');
+
+        for i = 1 : N-2 
             cropB = property3(indicesz(i)).BoundingBox;
-            cropB(1) = cropB(1)-2;
-            cropB(2) = cropB(2)-2;
-            cropB(3) = cropB(3)+ 2;
-            cropB(4) = cropB(4)+ 2;
+            cropB(1) = cropB(1) - 2;
+            cropB(2) = cropB(2) - 2;
+            cropB(3) = cropB(3) + 2;
+            cropB(4) = cropB(4) + 2;
+
             seg = imcrop(Icrop, cropB);
 
             gts = graythresh(seg);
             seg = ~ im2bw(seg, gts);
 
-            % figure
-            % imshow(seg)
             t_img = property3(indicesz(i)).Image;
 
-                        % bbbb
             tmpv = getproperties(seg);
-            % size(tmpv)
-            % tmpv = getproperties(property3(row3).Image);
-            for j=1:fn 
-                featureVec(i,j) = tmpv(j); 
+
+            for j = 1 : fn 
+                featureVec(i, j) = tmpv(j); 
             end
-            featureVec(i,fn+1) = red_val;
+
+            featureVec(i, fn + 1) = red_val;
         end
     else
-        featureVec = no -4;
+        featureVec = N - 4;
     end
-    % featureVec(no*fn+1) = red_val;
-    % featureVec(end) = red_val;
-    % featureVec
 
     runn = featureVec;

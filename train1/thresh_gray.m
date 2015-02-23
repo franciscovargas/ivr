@@ -24,49 +24,42 @@ updated upper bounds:
     r: 0.6026
     g: 0.6096
     b: 0.616
-    
 %}
 
-% img = imread('train14.jpg');
-% dimensions of the image
+% Dimensions of the image
 [height width channels] = size(value);
-% normalize rgb
+
+% Normalize rgb
 normed = rgbnorm(value);
-% 
+
 normed = rgb2gray(normed);
-% find edges
-edges = linspace(0,1,255);
 
-% value = normed;
+% Find edges
+edges = linspace(0, 1, 255);
 
-% flatten values in redscale the two
+% Flatten values in redscale the two
 % last parameters of reshape
 % define the new dimensions of vecr
-vecr = reshape(normed,1,width*height);
-% same for green
+vecr = reshape(normed, 1, width*height);
 
-
-% find histograms
+% Find histograms
 histr = histc(vecr, edges);
 
-
-% use findtnorm to find threshold values
+% Use findtnorm to find threshold values
 sizeparam = 8;
-% ftnr = findtfeat(histr,edges,sizeparam,1);
-ftnr = findtfeat(histr,edges,sizeparam,0);
+ftnr = findtfeat(histr, edges, sizeparam, 0);
 
 [height, width, color] = size(normed);
 output = zeros(height, width);
 for row = 1 : height
     for col = 1 : width
-        if normed(row,col) < ftnr ... % inside high bnd
-        & normed(row,col) >  0.0 % optional low bnd
-            output(row,col) = 1;
+        if normed(row, col) < ftnr ... % inside high bnd
+        & normed(row, col) >  0.0 % optional low bnd
+            output(row, col) = 1;
         else
-            output(row,col) = 0;
+            output(row, col) = 0;
         end
     end
 end
-
 
 thresh = output;

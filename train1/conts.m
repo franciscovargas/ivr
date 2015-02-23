@@ -1,5 +1,5 @@
 
-function conts = countours(img)
+function conts = countours(img, show)
 %{
    -- This function takes in a binary
    image and proceeds to find regions
@@ -9,72 +9,70 @@ function conts = countours(img)
    function.
 %}
 
-% dimensions
+% Dimensions
 [height width] = size(img);
 
-% display image
-% figure
-% imshow(img)
+if show == 1
+  figure
+  imshow(img)
+end
 
-% lable connecteded elements
-[lable na] = bwlabel(img);
+% Lable connecteded elements
+[lable none] = bwlabel(img);
 
-% calculate the properties of the regions
+% Calculate the properties of the regions
 % within the image
 property = regionprops(lable, 'all');
 
-% TO DO. Center of mass calculation
-[y x] = find(img);
-cent = [mean(x) mean(y)];
-
 % Retain current plots when adding new plots
-% hold on
+if show == 1
+  hold on
+end
 
-% draw the bounding boxes in the image
+% Draw the bounding boxes in the image
 [none asize] = size([property.Area]);
 area = zeros(none, asize);
 
-for n=1:size(property, 1)
-
-    % rectangle('Position', ...
-    %           property(n).BoundingBox, ...
-    %           'EdgeColor', ...
-    %           'g', ...
-    %           'LineWidth', ...
-    %           2);
-    % convex = property(n).ConvexHull;
-    % x = convex(:,1);
-    % y = convex(:,2);
-    % plot(x,y,'b');
-    area(n) = property(n).BoundingBox(3) * property(n).BoundingBox(4);
+for n = 1 : size(property, 1)
+  if show == 1
+    rectangle('Position', ...
+              property(n).BoundingBox, ...
+              'EdgeColor', ...
+              'g', ...
+              'LineWidth', ...
+              2);
+  end
+  % convex = property(n).ConvexHull;
+  % x = convex(:,1);
+  % y = convex(:,2);
+  % plot(x,y,'b');
+  area(n) = property(n).BoundingBox(3) * property(n).BoundingBox(4);
 end
 
-% find areas smaller than 200
-small_areas=find([property.Area]<200);
+% Find areas smaller than 200
+small_areas = find([property.Area] < 200);
 
-% display areas (in red) smaller than 200
-for n=1:size(small_areas,2)
-
-    % rectangle('Position', ...
-    % 	        property(small_areas(n)).BoundingBox, ...
-    % 		      'EdgeColor', ...
-    %           'r', ...
-    %           'LineWidth', ...
-    %           2);
+% Display areas (in red) smaller than 200
+for n = 1 : size(small_areas, 2)
+  if show == 1
+    rectangle('Position', ...
+              property(small_areas(n)).BoundingBox, ...
+              'EdgeColor', ...
+              'r', ...
+              'LineWidth', ...
+              2);
+  end
 end
 
-% remove the small areas
-for n=1:size(small_areas,2)
+% Remove the small areas
+for n = 1 : size(small_areas, 2)
+  
+  coord = round(property(small_areas(n)).BoundingBox);
 
-    coord=round(property(small_areas(n)).BoundingBox);
-
-    img(coord(2): coord(2) + coord(4), coord(1): coord(1) + coord(3)) = 0;
+  img(coord(2): coord(2) + coord(4), coord(1): coord(1) + coord(3)) = 0;
 end
 
-% figure
-% imshow(img)
-
-% array structure 'out' containing:
+% Array structure 'out' containing:
 
 % default region properties
 out.prop = property;

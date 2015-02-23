@@ -3,16 +3,14 @@
 % (Invcors) and aprori probabilities (Aprioris)
 function class = classify(v,N,Means,Invcors,Dim,Aprioris)
 
-        evals = zeros(N,1);
-        IC = zeros(Dim,Dim);
+        evals = zeros(N, 1);
+        IC = zeros(Dim, Dim);
         for i = 1 : N
             % We need to reshape since Invcors(i,:,:) gives 1xDimxDim matrix
-            i
-            size(Invcors(i,:,:))
             IC = reshape(Invcors(i,:,:),Dim,Dim);
-            evals(i) = multivariate(v,Means(i,:),IC,Aprioris(i));
+            evals(i) = multivariate(v, Means(i,:), IC, Aprioris(i));
         end
-        evaluations = evals'
+        evaluations = evals';
         bestclasses = find(evals == max(evals));
         class.class = bestclasses(1);
         class.proba = max(evals);
