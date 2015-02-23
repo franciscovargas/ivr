@@ -1,5 +1,8 @@
-eval(['load ','train.mat',' maxclasses Means Invcors Aprioris'])
+eval(['load ','training.mat',' maxclasses Means Invcors Aprioris'])
 tr_c = load('GT_testing.mat');
+gtt_conts = tr_c.gt_test;
+suitst = gtt_conts(:,1);
+% [M none] = size(suits);
 imagestem = 'test';
 run=1;
 N =32
@@ -14,6 +17,10 @@ Dim=4;
 % [reds sort_indexes] = sort(reds);
 
 imagenum=0;
+
+% confusion each property
+ind = 1;
+
 while ~(run == 0)
     imagenum = imagenum + 1;
     currentimagergb = imread([imagestem, ...
@@ -25,12 +32,21 @@ while ~(run == 0)
     [s none] = size(vec)
     [naN Dim] = size(Means)
     class = []
+
     for k=1:s
         % vec
         classi = classify(vec(k,:),maxclasses,Means,Invcors,Dim,Aprioris);
         class(k)= classi.class;
         probl(k) = classi.proba;
+
+        % confusion each property
+        % out_s(ind + k - 1, 1) = classi.class;
+        pred_all_s(ind + k - 1, 1) = classi.class;
+        % 
+        exp_all_s(k + ind - 1, 1) = suitst(imagenum);
     end
+
+
     class
     probl
     best_class_index = find(probl == max(probl));
@@ -39,6 +55,11 @@ while ~(run == 0)
     num
     out_vec(imagenum, 1) = mode(class);
     out_vec(imagenum, 2) = num;
+
+    % confusion each property
+    ind = ind + s;
+
+    % out_s()
     if imagenum+1 == 33
         break;
     end
@@ -46,9 +67,12 @@ while ~(run == 0)
     int2str(imagenum+1),' (0,1)\n?']);
    
 end
+
 class_vecf.suits = out_vec(:,1);
 class_vecf.numbe = out_vec(:,2);
-save('confusion_matrix.mat','class_vecf');
+save('predicted.mat','class_vecf');
+
+% confusion
 
 % gtf = load('GT_training.mat');
 % gtf_conts = gtf.gt_training;

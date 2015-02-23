@@ -5,7 +5,7 @@ suits = gtf_conts(:,1);
 N
 
 Dim = 4; % number of feature properties
-modelfilename ='train.mat';
+modelfilename ='training.mat';
 maxclasses = 4;
 trainfilestem = 'train';
 % N = input('Number of training images (int)\n?');
@@ -22,6 +22,7 @@ trainfilestem = 'train';
 disp('THE LINE ############################################################');
 
 ss=1;
+% ind = 1;
 for imagenum = 1 : N
     currentimagergb2 = imread([trainfilestem, int2str(imagenum), '.jpg'], 'jpg');
     % currentimage = rgb2gray(currentimagergb);
@@ -43,13 +44,14 @@ for imagenum = 1 : N
     % trueclasses(imagenum) = input(['Train image ', int2str(imagenum), ...
     %                                 ' true class (1..', int2str(maxclasses), ')\n?']);
     ss = ss + s - 1;
-    trueclasses(imagenum) = suits(imagenum);
-    if trueclasses(imagenum) == 3
-        trueclasses(imagenum) = 2;
-    else
-        trueclasses(imagenum) = 1;
-    end
-
+    % ind = ind + s;
+    % trueclasses(imagenum) = suits(imagenum);
+    % if trueclasses(imagenum) == 3
+    %     trueclasses(imagenum) = 2;
+    % else
+    %     trueclasses(imagenum) = 1;
+    % end
+imagenum
 end
 size(vec)
 % trueclasses
