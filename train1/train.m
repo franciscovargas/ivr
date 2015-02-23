@@ -9,15 +9,48 @@ modelfilename = input('Model file name (filename)\n?','s');
 maxclasses = input('Number of classes (int)\n?');
 trainfilestem = input('Training image file stem (filestem)\n?', 's');
 % N = input('Number of training images (int)\n?');
+
 for imagenum = 1 : N
     currentimagergb = imread([trainfilestem, int2str(imagenum), '.jpg'], 'jpg');
+    
+    extrr = extractprops(currentimagergb,0);
+        % red channel
+    reds(imagenum) = mean(extrr(:,Dim+1));
+end
+[reds sort_indexes] = sort(reds);
+
+disp('THE LINE ############################################################');
+
+ss=1;
+for imagenum = 1 : N/2
+    currentimagergb2 = imread([trainfilestem, int2str(sort_indexes(imagenum)), '.jpg'], 'jpg');
     % currentimage = rgb2gray(currentimagergb);
-    currentimage = currentimagergb;
-    vec(imagenum,:) = extractprops(currentimage);
+    currentimage = currentimagergb2;
+
+    % figure
+    % imshow(currentimage);
+
+    extr = extractprops(currentimage,0);
+    [s non] = size(extr);
+    
+    % ss = s;
+    s
+    non
+    for i=1:s
+        vec(imagenum + i - 1 + (ss-1),:) = extr(i,1:3);
+    end
     % trueclasses(imagenum) = input(['Train image ', int2str(imagenum), ...
     %                                 ' true class (1..', int2str(maxclasses), ')\n?']);
-    trueclasses(imagenum) = suits(imagenum);
+    ss = ss + s - 1;
+    trueclasses(imagenum) = suits(sort_indexes(imagenum));
+    if trueclasses(imagenum) == 3
+        trueclasses(imagenum) = 2;
+    else
+        trueclasses(imagenum) = 1;
+    end
+
 end
 size(vec)
+trueclasses
 [Means, Invcors, Aprioris] = buildmodel(Dim, vec, N, maxclasses, trueclasses);
 eval(['save ', modelfilename, ' maxclasses Means Invcors Aprioris'])

@@ -12,4 +12,5 @@ function class = classify(v,N,Means,Invcors,Dim,Aprioris)
         end
         evaluations = evals'
         bestclasses = find(evals == max(evals));
-        class = bestclasses(1);
+        class.class = bestclasses(1);
+        class.proba = max(evals);
