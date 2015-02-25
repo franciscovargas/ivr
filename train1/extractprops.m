@@ -1,98 +1,107 @@
-function runn = extractprops(img, prop, show_conts)
+function extractproperties = extractprops(img, prop, show_conts) % TODO runn
     I = rgb2gray(img);
 
     % Laplacian edge detection
-    threshed = edge(I, 'log');
-    threshed = bwareaopen(threshed, 510);
+    threshed_edge = edge(I, 'log');                     % TODO threshed
+    threshed_edge = bwareaopen(threshed_edge, 510);
 
     % Bounding box for card
-    out1 = conts(threshed, show_conts);
-    property = out1.prop;
-    [maxs row] = max([property.Area], [], 2);
-    main_box = property(row).BoundingBox;
-
-    [th tw ch] = size(img);
+    card_properties = conts(threshed_edge, show_conts);         % TODO out1
+    card_regions = card_properties.prop;                       % TODO property      % TODO prop?
+    [maxs max_index] = max([card_regions.Area], [], 2);           % TODO row?;  maxs not used
+    main_box = card_regions(max_index).BoundingBox;                                           
 
     main_box(1) = main_box(1) + 5;
     main_box(2) = main_box(2) + 5;
     main_box(3) = main_box(3) - 9;
     main_box(4) = main_box(4) - 10;
+
     center.x = main_box(3) / 2.0;
     center.y = main_box(4) / 2.0;
-    tester1 = imcrop(img, main_box);
-    crop = imcrop(img, main_box);
+    % tester1 = imcrop(img, main_box);            % TODO tester1
+    card_crop = imcrop(img, main_box);               % TODO crop
+
+    % figure
+    % imshow(crop);
 
     % Binary threshold of grayscale image
-    threshed2 = thresh_gray(tester1);
+    % Threshold of suits and number without noise removal
+    threshed_feats = thresh_gray(card_crop);           % was tester1;   threshed2
 
     % Noise removal via majority
-    threshed2 = bwmorph(threshed2, 'majority', 300);
+    threshed_feats = bwmorph(threshed_feats, 'majority', 300);
 
-    % Noise removal within the card region
-    out2 = conts(threshed2, 0);
-    bwf = out2.bw;
+    % Additional noise removal within the card region
+    noise_removed = conts(threshed_feats, 0);                 % TODO out2
+    clear_image = noise_removed.bw;                              % TODO bwf
 
     % Detection of suits and number
-    out3 = conts(bwf, show_conts);
-    property3 = out3.prop;
-    [mins row3] = min([property3.Area], [], 2);
-    smallest = property3(row3).BoundingBox;
-    smallest = imcrop(crop, smallest);
+    feature_properties = conts(clear_image, show_conts);              % TODO out3
+    feature_regions = feature_properties.prop;                      % TODO property3
+    [mins min_index] = min([feature_regions.Area], [], 2); % TODO row3
+    smallest_feat = feature_regions(min_index).BoundingBox;      % TODO smallest
+    smallest_feat = imcrop(card_crop, smallest_feat);
 
-    [maxes row3m] = max(out3.boxarea, [], 2);
-    biggest = property3(row3m).BoundingBox;
-    biggest = imcrop(crop, biggest);
+    % [maxs max_index2] = max(feature_properties.boxarea, [], 2);   % TODO row3m    maxes->maxs
+    % biggest = property3(max_index2).BoundingBox;
+    % biggest = imcrop(crop, biggest);
 
     % PROPERTIES
 
     % Red channel
-    smallest_norm = rgbnorm2(smallest);
-    smallest_norm_red = smallest_norm(:, :, 1);
-    [h w] = size(smallest_norm_red);
-    red_vec = reshape(smallest_norm_red, 1, w*h);
-    red_val = mean(red_vec);
+    smallest_feat_norm = rgbnorm2(smallest_feat);                % TODO smallest_norm
+    smallest_feat_norm_red = smallest_feat_norm(:, :, 1);          % TODO smallest_norm_red
+    [h w] = size(smallest_feat_norm_red);
+    red_vec_feat = reshape(smallest_feat_norm_red, 1, h*w);      % TODO red_vec
+    % red_vec
+    avg_red_val_feat = mean(red_vec_feat);                    % TODO red_val
 
-    Icrop = rgb2gray(rgbnorm(crop));
+    gray_crop = rgb2gray(card_crop);            % TODO rgbnorm NOT NECESSARY
+                                                % TODO Icrop
 
     % Feature vector
-    fn = 3;
-    [N none] = size(property3); 
+    % fn = 3;                                     % TODO fn
+    [N none] = size(feature_regions); 
 
     for i = 1 : N
-        xx = property3(i).Centroid(1) - center.x;
-        yy = property3(i).Centroid(2) - center.y;
-        vec6(i) = sqrt(xx*xx + yy*yy);
+        xx = feature_regions(i).Centroid(1) - center.x;
+        yy = feature_regions(i).Centroid(2) - center.y;
+        dist_vec(i) = sqrt(xx*xx + yy*yy);          % TODO vec6
     end
 
-    [none indicesz] = sort(vec6);
+    [none dist_index] = sort(dist_vec);               % TODO indicesz -> indices
 
     if ~prop
         disp('#######################');
 
-        for i = 1 : N-2 
-            cropB = property3(indicesz(i)).BoundingBox;
-            cropB(1) = cropB(1) - 2;
-            cropB(2) = cropB(2) - 2;
-            cropB(3) = cropB(3) + 2;
-            cropB(4) = cropB(4) + 2;
+        for i = 1 : N - 2 
+            feat_crop = feature_regions(dist_index(i)).BoundingBox; % TODO cropB
+            feat_crop(1) = feat_crop(1) - 2;
+            feat_crop(2) = feat_crop(2) - 2;
+            feat_crop(3) = feat_crop(3) + 2;
+            feat_crop(4) = feat_crop(4) + 2;
 
-            seg = imcrop(Icrop, cropB);
+            threshed_feat_crop = imcrop(gray_crop, feat_crop);         % TODO seg ?
 
-            gts = graythresh(seg);
-            seg = ~ im2bw(seg, gts);
+            gray_level = graythresh(threshed_feat_crop);              % TODO gts
+            threshed_feat_crop = ~ im2bw(threshed_feat_crop, gray_level);
 
-            t_img = property3(indicesz(i)).Image;
+            % t_img = feature_regions(dist_index(i)).Image;   % TODO t_img
 
-            tmpv = getproperties(seg);
+            feat_vec = getproperties(threshed_feat_crop);          % TODO tmpv
+            [none prop_num] = size(feat_vec);
 
-            for j = 1 : fn 
-                featureVec(i, j) = tmpv(j); 
+            for j = 1 : prop_num 
+                feat_vec_matrix(i, j) = feat_vec(j);                     % TODO featureVec
             end
 
-            featureVec(i, fn + 1) = red_val;
+            feat_vec_matrix(i, prop_num + 1) = avg_red_val_feat;
         end
+
+        extractproperties = feat_vec_matrix;
     else
-        featureVec = N - 4;
+        card_number = N - 4;                % TODO feat_vec_matrix
+        extractproperties = card_number;
     end
 
-    runn = featureVec;
+    % extractproperties = feat_vec_matrix;

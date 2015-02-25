@@ -3,7 +3,7 @@ function vec = getproperties(Image)
     % figure
     % imshow(Image)
 
-     % bbbbbbbbbbbbbbbbbb
+    %  bbbbbbbbbbbbbbbbbb
      [H,W] = size(Image);
      area = bwarea(Image);
      perim = bwarea(bwperim(Image,4));
@@ -36,7 +36,6 @@ ci6 = 1000000*imag(tmp);
 %ci=[ci1,ci2,ci3,ci4,ci5,ci6]
 
     % vec = [compactness,ci1,ci2,ci3,ci4,ci5,ci6];
-     vec = [compactness,ci1,ci2];         %only use 3 as only have 4 samples
+     vec = [compactness,ci1,ci2];         % only use 3 as only have 4 samples   % TODO change?
      % vec = [compactness,ci1];
-     % vec
      % vec

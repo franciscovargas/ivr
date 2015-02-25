@@ -4,29 +4,28 @@
 % sizeparam should be at least 4, with larger giving less smoothing
 function thresh = findthresh(thehist, edges,sizeparam,show)
 
-  [len, x] = size(thehist);
+  [none, len] = size(thehist);                             % TODO len -> none; x -> len
 
   % convolve with a gaussian smoothing window here
-  filterlen = sizeparam;                               % filter length
+  filterlen = sizeparam;                                % filter length
   thefilter = fspecial('gaussian', [1, sizeparam], 6);
-  thefilter = thefilter / sum(thefilter);                % normalize
-  tmp2 = conv(thefilter, thehist);   
+  thefilter = thefilter / sum(thefilter);               % normalize
+  tmp2 = conv(thefilter, thehist);                      % TODO tmp2
 
-
-  tmp2;           
+  % tmp2;                                                 % TODO comment out
   tmp1 = tmp2;    % select corresponding portion
   if show > 0
      figure
      clf
-     plot(edges, tmp1(1 : x))
+     plot(edges, tmp1(1 : len))
   end
 
-  % find largest peak
+  % Find largest peak
   max(tmp1);
   peak = find(tmp1 == max(tmp1));
   tmp1(peak);
   
-  % find first peak to left
+  % Find first peak to left
   xmaxl = -1;
   pkl = -1;
   for i = 2 : peak - 1
@@ -41,7 +40,7 @@ function thresh = findthresh(thehist, edges,sizeparam,show)
     xmaxl = 1;
   end
 
-  % find deepest valley between peaks
+  % Find deepest valley between peaks
   xminl = max(tmp1) + 1;
   vall = -1;
   for i = pkl + 1 : peak - 1
@@ -56,7 +55,7 @@ function thresh = findthresh(thehist, edges,sizeparam,show)
     xminl = 2;
   end
 
-  % find lowest point between peaks
+  % Find lowest point between peaks
   thresh = vall;
 
   edges(vall);

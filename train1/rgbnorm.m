@@ -13,5 +13,6 @@ for i = 1 : height
         normm(i,j,3) = double(blue(i,j)) / double( red(i,j) + blue(i,j) + green(i,j));
     end
 end
-
-rgbnorm = normm;
+% figure
+% imshow(img)
+rgbnorm = img;

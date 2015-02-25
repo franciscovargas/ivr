@@ -12,7 +12,7 @@ function conts = countours(img, show)
 % Dimensions
 [height width] = size(img);
 
-if show == 1
+if show == 1                            % TODO explain ==1
   figure
   imshow(img)
 end
@@ -22,7 +22,7 @@ end
 
 % Calculate the properties of the regions
 % within the image
-property = regionprops(lable, 'all');
+properties = regionprops(lable, 'all');   % TODO property -> properties?
 
 % Retain current plots when adding new plots
 if show == 1
@@ -30,33 +30,46 @@ if show == 1
 end
 
 % Draw the bounding boxes in the image
-[none asize] = size([property.Area]);
-area = zeros(none, asize);
+[none prop_num] = size([properties.Area]);   % TODO asize
+area = zeros(none, prop_num);
 
-for n = 1 : size(property, 1)
+for n = 1 : size(properties, 1)
+  delta_x = properties(n).BoundingBox(3);
+  delta_y = properties(n).BoundingBox(4);
+  major_ax = max(delta_x,delta_y);      % TODO mayor_ax
+  min_ax = min(delta_y,delta_x);
+  ratio = major_ax / min_ax;
+
+  if ratio >= 3
+    coordinate = round(properties(n).BoundingBox);
+    img(coordinate(2): coordinate(2) + coordinate(4),...
+        coordinate(1): coordinate(1) + coordinate(3)) = 0;
+  end
+
   if show == 1
     rectangle('Position', ...
-              property(n).BoundingBox, ...
+              properties(n).BoundingBox, ...
               'EdgeColor', ...
               'g', ...
               'LineWidth', ...
               2);
   end
+
   % convex = property(n).ConvexHull;
   % x = convex(:,1);
   % y = convex(:,2);
   % plot(x,y,'b');
-  area(n) = property(n).BoundingBox(3) * property(n).BoundingBox(4);
+  area(n) = properties(n).BoundingBox(3) * properties(n).BoundingBox(4);
 end
 
-% Find areas smaller than 200
-small_areas = find([property.Area] < 200);
+% Find areas smaller than 150
+small_areas = find([properties.Area] < 150);
 
-% Display areas (in red) smaller than 200
+% Display areas (in red) smaller than 150
 for n = 1 : size(small_areas, 2)
   if show == 1
     rectangle('Position', ...
-              property(small_areas(n)).BoundingBox, ...
+              properties(small_areas(n)).BoundingBox, ...
               'EdgeColor', ...
               'r', ...
               'LineWidth', ...
@@ -67,20 +80,21 @@ end
 % Remove the small areas
 for n = 1 : size(small_areas, 2)
   
-  coord = round(property(small_areas(n)).BoundingBox);
+  small_coordinates = round(properties(small_areas(n)).BoundingBox);    % TODO coord?
 
-  img(coord(2): coord(2) + coord(4), coord(1): coord(1) + coord(3)) = 0;
+  img(small_coordinates(2): small_coordinates(2) + small_coordinates(4), ...
+      small_coordinates(1): small_coordinates(1) + small_coordinates(3)) = 0;
 end
 
-% Array structure 'out' containing:
+% Array structure 'prop_struct' containing:     % TODO out
 
 % default region properties
-out.prop = property;
+prop_struct.prop = properties;                    % TODO out
 
 % noise cleaned binary image
-out.bw = img;
+prop_struct.bw = img;
 
 % areas of BoundingBoxes
-out.boxarea = area;
+prop_struct.boxarea = area;
 
-conts = out;
+conts = prop_struct;

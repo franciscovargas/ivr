@@ -35,7 +35,7 @@ normed = rgbnorm(value);
 normed = rgb2gray(normed);
 
 % Find edges
-edges = linspace(0, 1, 255);
+edges = linspace(0, 255, 256);
 
 % Flatten values in redscale the two
 % last parameters of reshape
@@ -43,23 +43,24 @@ edges = linspace(0, 1, 255);
 vecr = reshape(normed, 1, width*height);
 
 % Find histograms
-histr = histc(vecr, edges);
+histr = histc(vecr, edges);                     % TODO histc not recommended in MathWorks
 
 % Use findtnorm to find threshold values
-sizeparam = 8;
-ftnr = findtfeat(histr, edges, sizeparam, 0);
+sizeparam = 40;
+upper_thresh = findtfeat(histr, edges, sizeparam, 0);   % TODO ftnr
 
 [height, width, color] = size(normed);
-output = zeros(height, width);
+threshed_img = zeros(height, width);                  % TODO output?
 for row = 1 : height
     for col = 1 : width
-        if normed(row, col) < ftnr ... % inside high bnd
-        & normed(row, col) >  0.0 % optional low bnd
-            output(row, col) = 1;
+        if normed(row, col) < upper_thresh...   % inside high boundary       % TODO bnd->bound
+        & normed(row, col) >= 0                 % optional low boundary
+            threshed_img(row, col) = 1;
         else
-            output(row, col) = 0;
+            % output(row, col)
+            threshed_img(row, col) = 0;
         end
     end
 end
 
-thresh = output;
+thresh = threshed_img;

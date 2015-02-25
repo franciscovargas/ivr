@@ -1,14 +1,18 @@
-eval(['load ', 'training2.mat', ' maxclasses Means Invcors Aprioris']);
+% TODO Write comments
+% make a function with cam read test
 
-gt_testing = load('GT_testing.mat');
-gt_test_conts = gt_testing.gt_test;
+
+eval(['load ', 'training3.mat', ' maxclasses Means Invcors Aprioris']);
+
+gt_testing = load('gt_testing2.mat');
+gt_test_conts = gt_testing.test2;
 suits = gt_test_conts(:, 1);
 
 imagestem = 'test';
 
 run = 1;
-N = 32;
 Dim = 4;
+N = 40;
 
 imagenum = 0;
 k = 1;
@@ -33,15 +37,18 @@ while ~(run == 0)
                               Dim, ...
                               Aprioris);
         class(i) = feat_class.class;
-        probl(i) = feat_class.prob;
+        prob(i) = feat_class.prob;         % TODO probl?
 
         pred_all_feats(i + k - 1, 1) = feat_class.class;
         exp_all_feats(i + k - 1, 1) = suits(imagenum);
     end
 
+    % PRINT
+    class
+
     k = k + feat_num;
 
-    best_class_index = find(probl == max(probl));
+    best_class_index = find(prob == max(prob));
 
     disp(['Suit: ', int2str(mode(class))]);
     disp(['Number: ', int2str(num)]);
@@ -49,7 +56,8 @@ while ~(run == 0)
     out_vec(imagenum, 1) = mode(class);
     out_vec(imagenum, 2) = num;
 
-    if imagenum + 1 == 33
+    % CHANGED after ==
+    if imagenum + 1 == N + 1
         break;
     end
 
