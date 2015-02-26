@@ -1,0 +1,32 @@
+Cards Grouped by Suits
+
+confusion_suits =
+
+     8     0     0     0
+     0     8     0     0
+     0     0     8     0
+     0     0     0     8
+
+
+Cards Grouped by Value
+
+confusion_nums =
+
+     4     0     0     0     0     0     0     0
+     0     4     0     0     0     0     0     0
+     0     0     4     0     0     0     0     0
+     0     0     0     4     0     0     0     0
+     0     0     0     0     4     0     0     0
+     0     0     0     0     0     4     0     0
+     0     0     0     0     0     0     4     0
+     0     0     0     0     0     0     0     4
+
+
+Individual Suit Symbols
+
+confusion_all_feats =
+
+    60     0     0     0
+     0    60     0     0
+     2     0    58     0
+     0     2     0    58
