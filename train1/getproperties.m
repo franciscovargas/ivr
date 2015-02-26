@@ -1,7 +1,7 @@
 % gets property vector for a binary shape in an image
 function vec = getproperties(Image)
-    figure
-    imshow(Image)
+    % figure
+    % imshow(Image)
 
     [H,W] = size(Image);
     area = bwarea(Image);

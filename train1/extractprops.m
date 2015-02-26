@@ -40,18 +40,6 @@ function extractproperties = extractprops(img, suit_or_num, show_conts)
     feature_properties = conts(clear_image, show_conts);
     feature_regions = feature_properties.prop;
 
-    % Smallest region used to find average in red channel
-    [mins min_index] = min([feature_regions.Area], [], 2);
-    smallest_feat = feature_regions(min_index).BoundingBox;
-    smallest_feat = imcrop(card_crop, smallest_feat);
-
-    % Finding average of red channel in smallest feature
-    smallest_feat_norm = rgbnorm(smallest_feat);
-    smallest_feat_norm_red = smallest_feat_norm(:, :, 1);
-    [h w] = size(smallest_feat_norm_red);
-    red_vec_feat = reshape(smallest_feat_norm_red, 1, h*w);
-    avg_red_val_feat = mean(red_vec_feat);
-
     % Gray scale of approx card cropping
     gray_crop = rgb2gray(card_crop);
 
@@ -67,6 +55,17 @@ function extractproperties = extractprops(img, suit_or_num, show_conts)
 
     % Sorting the above distances
     [none dist_index] = sort(dist_vec);
+
+    % Closest region to center used to find average in red channel
+    smallest_feat = feature_regions(dist_index(1)).BoundingBox;
+    smallest_feat = imcrop(card_crop, smallest_feat);
+
+    % Finding average of red channel in most centered feature
+    smallest_feat_norm = rgbnorm(smallest_feat);
+    smallest_feat_norm_red = smallest_feat_norm(:, :, 1);
+    [h w] = size(smallest_feat_norm_red);
+    red_vec_feat = reshape(smallest_feat_norm_red, 1, h*w);
+    avg_red_val_feat = mean(red_vec_feat);
 
     % S
     if ~suit_or_num                                                          % TODO prop
