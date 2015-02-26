@@ -1,107 +1,113 @@
-function extractproperties = extractprops(img, prop, show_conts) % TODO runn
+function extractproperties = extractprops(img, suit_or_num, show_conts)
+
     I = rgb2gray(img);
 
     % Laplacian edge detection
-    threshed_edge = edge(I, 'log');                     % TODO threshed
+    threshed_edge = edge(I, 'log');
     threshed_edge = bwareaopen(threshed_edge, 510);
 
     % Bounding box for card
-    card_properties = conts(threshed_edge, show_conts);         % TODO out1
-    card_regions = card_properties.prop;                       % TODO property      % TODO prop?
-    [maxs max_index] = max([card_regions.Area], [], 2);           % TODO row?;  maxs not used
+    card_properties = conts(threshed_edge, show_conts);
+    card_regions = card_properties.prop;
+    [maxs max_index] = max([card_regions.Area], [], 2);
     main_box = card_regions(max_index).BoundingBox;                                           
 
+    % Scaling down bounding box dimensions
     main_box(1) = main_box(1) + 5;
     main_box(2) = main_box(2) + 5;
     main_box(3) = main_box(3) - 9;
     main_box(4) = main_box(4) - 10;
 
+    % Center of bounding box (approx center of the card)
     center.x = main_box(3) / 2.0;
     center.y = main_box(4) / 2.0;
-    % tester1 = imcrop(img, main_box);            % TODO tester1
-    card_crop = imcrop(img, main_box);               % TODO crop
 
-    % figure
-    % imshow(crop);
+    % Approximate cropping of the card
+    card_crop = imcrop(img, main_box);
 
     % Binary threshold of grayscale image
     % Threshold of suits and number without noise removal
-    threshed_feats = thresh_gray(card_crop);           % was tester1;   threshed2
+    threshed_feats = thresh_gray(card_crop);
 
     % Noise removal via majority
     threshed_feats = bwmorph(threshed_feats, 'majority', 300);
 
     % Additional noise removal within the card region
-    noise_removed = conts(threshed_feats, 0);                 % TODO out2
-    clear_image = noise_removed.bw;                              % TODO bwf
+    noise_removed = conts(threshed_feats, 0);
+    clear_image = noise_removed.bw;
 
     % Detection of suits and number
-    feature_properties = conts(clear_image, show_conts);              % TODO out3
-    feature_regions = feature_properties.prop;                      % TODO property3
-    [mins min_index] = min([feature_regions.Area], [], 2); % TODO row3
-    smallest_feat = feature_regions(min_index).BoundingBox;      % TODO smallest
+    feature_properties = conts(clear_image, show_conts);
+    feature_regions = feature_properties.prop;
+
+    % Smallest region used to find average in red channel
+    [mins min_index] = min([feature_regions.Area], [], 2);
+    smallest_feat = feature_regions(min_index).BoundingBox;
     smallest_feat = imcrop(card_crop, smallest_feat);
 
-    % [maxs max_index2] = max(feature_properties.boxarea, [], 2);   % TODO row3m    maxes->maxs
-    % biggest = property3(max_index2).BoundingBox;
-    % biggest = imcrop(crop, biggest);
-
-    % PROPERTIES
-
-    % Red channel
-    smallest_feat_norm = rgbnorm2(smallest_feat);                % TODO smallest_norm
-    smallest_feat_norm_red = smallest_feat_norm(:, :, 1);          % TODO smallest_norm_red
+    % Finding average of red channel in smallest feature
+    smallest_feat_norm = rgbnorm(smallest_feat);
+    smallest_feat_norm_red = smallest_feat_norm(:, :, 1);
     [h w] = size(smallest_feat_norm_red);
-    red_vec_feat = reshape(smallest_feat_norm_red, 1, h*w);      % TODO red_vec
-    % red_vec
-    avg_red_val_feat = mean(red_vec_feat);                    % TODO red_val
+    red_vec_feat = reshape(smallest_feat_norm_red, 1, h*w);
+    avg_red_val_feat = mean(red_vec_feat);
 
-    gray_crop = rgb2gray(card_crop);            % TODO rgbnorm NOT NECESSARY
-                                                % TODO Icrop
+    % Gray scale of approx card cropping
+    gray_crop = rgb2gray(card_crop);
 
-    % Feature vector
-    % fn = 3;                                     % TODO fn
+    % Size of feature vector
     [N none] = size(feature_regions); 
 
+    % Approx distance between center of mass of each region and card center
     for i = 1 : N
         xx = feature_regions(i).Centroid(1) - center.x;
         yy = feature_regions(i).Centroid(2) - center.y;
-        dist_vec(i) = sqrt(xx*xx + yy*yy);          % TODO vec6
+        dist_vec(i) = sqrt(xx*xx + yy*yy);
     end
 
-    [none dist_index] = sort(dist_vec);               % TODO indicesz -> indices
+    % Sorting the above distances
+    [none dist_index] = sort(dist_vec);
 
-    if ~prop
+    % S
+    if ~suit_or_num                                                          % TODO prop
         disp('#######################');
+        fprintf('\n');
 
+        % Outer loop for N-2 closest regions to the center (suits)
         for i = 1 : N - 2 
-            feat_crop = feature_regions(dist_index(i)).BoundingBox; % TODO cropB
+            % Using dist_index to insure iteration over sorted regions
+            feat_crop = feature_regions(dist_index(i)).BoundingBox;
+
+            % Scaling up of suit regions
             feat_crop(1) = feat_crop(1) - 2;
             feat_crop(2) = feat_crop(2) - 2;
             feat_crop(3) = feat_crop(3) + 2;
             feat_crop(4) = feat_crop(4) + 2;
 
-            threshed_feat_crop = imcrop(gray_crop, feat_crop);         % TODO seg ?
-
-            gray_level = graythresh(threshed_feat_crop);              % TODO gts
+            % Cropping and threshing of suit region on a non threshed gray scale card
+            threshed_feat_crop = imcrop(gray_crop, feat_crop);
+            gray_level = graythresh(threshed_feat_crop);
             threshed_feat_crop = ~ im2bw(threshed_feat_crop, gray_level);
 
-            % t_img = feature_regions(dist_index(i)).Image;   % TODO t_img
-
-            feat_vec = getproperties(threshed_feat_crop);          % TODO tmpv
+            % Feature vectors for classification or training
+            feat_vec = getproperties(threshed_feat_crop);
             [none prop_num] = size(feat_vec);
 
+            % Inner loop building matrix of rows as feature vector
             for j = 1 : prop_num 
-                feat_vec_matrix(i, j) = feat_vec(j);                     % TODO featureVec
+                feat_vec_matrix(i, j) = feat_vec(j);
             end
 
+            % Adding mean red channel value of card to feature vectors
             feat_vec_matrix(i, prop_num + 1) = avg_red_val_feat;
         end
 
+        % Return value of the function
         extractproperties = feat_vec_matrix;
     else
-        card_number = N - 4;                % TODO feat_vec_matrix
+        % Card number prediction (counting)
+        card_number = N - 4;
+
+        % Return value of the function       
         extractproperties = card_number;
     end
-
-    % extractproperties = feat_vec_matrix;
