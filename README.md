@@ -1,10 +1,17 @@
-# ivr
-In order to run the current work attempt the following
-within the matlab console (inside the train 1 directory):
+# Computer Vision Pocker Card Classifier.
 
-    > img = imread('train1.jpg');
-    > threshed = thresh(img);
-    > conts(threshed);
+Computer vision algorithm suite for classifying pictures of cards.
 
-I still have not clue what GT_training.mat is. Its some
-matrix of some sort.
+The algorithms perform segmentation via filtering, adaptive thresholding and morphological transformations:
+
+![](https://github.com/franciscovargas/ivr/blob/master/train1/histograms/rotate_works.jpg)
+
+The adaptive thresholding is carried out by localizing global maximas in the gaussian filtered intensity histogram:
+
+![](https://github.com/franciscovargas/ivr/blob/master/train1/histograms/red_crop_hist.jpg)
+
+Then performing standard blob detection methodolgy to extract meaningful features such as curvature, principal components, convec hull , complex moments etc.
+
+![](https://github.com/franciscovargas/ivr/blob/master/train1/histograms/fail_in%20action.jpg)
+
+the train.m file trains the model on the images in train1 and the test.m tests them on the images in test1. Card is classified as suit and color

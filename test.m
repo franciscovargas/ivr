@@ -1,4 +1,4 @@
-eval(['load ','help.mat',' maxclasses Means Invcors Aprioris'])
+eval(['load ','train1/help.mat',' maxclasses Means Invcors Aprioris'])
 imagestem = input('Test image file stem (filestem)\n?','s');
 run=1;
 imagenum=0;

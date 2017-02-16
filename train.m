@@ -1,4 +1,4 @@
-gtf = load('GT_training.mat');
+gtf = load('train1/GT_training.mat');
 gtf_conts = gtf.gt_training;
 suits = gtf_conts(:,1);
 [N none] = size(suits);

@@ -1,7 +1,7 @@
 N=100;
 Constant=12;
 
-    inimage = imread(['train1.jpg'],'jpg');
+    inimage = imread(['train1/train1.jpg'],'jpg');
     [H,W] = size(inimage);
     outimage = zeros(H,W);
     N2 = floor(N/2);
